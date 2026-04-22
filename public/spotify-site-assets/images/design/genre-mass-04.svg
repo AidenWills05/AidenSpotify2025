@@ -1,0 +1,38 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Main pop aura gradient (pink → blue → lavender, high opacity, no cutout) -->
+    <linearGradient id="pop-g1" x1="420" y1="300" x2="1180" y2="650" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FF4FA3" stop-opacity="0.70"/>   <!-- bright pop pink -->
+      <stop offset="0.30" stop-color="#5B8CFF" stop-opacity="0.75"/> <!-- electric blue -->
+      <stop offset="0.65" stop-color="#C59BFF" stop-opacity="0.70"/> <!-- soft lavender -->
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.18"/>    <!-- subtle white edge -->
+    </linearGradient>
+
+    <!-- Secondary glow (pink + blue blend, softened) -->
+    <radialGradient id="pop-g2" cx="0" cy="0" r="1"
+      gradientUnits="userSpaceOnUse"
+      gradientTransform="translate(1040 380) rotate(135) scale(420 260)">
+      <stop offset="0" stop-color="#FF6BCB" stop-opacity="0.60"/>  <!-- pink glow -->
+      <stop offset="1" stop-color="#FF6BCB" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Soft blur filter -->
+    <filter id="pop-blur" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="70"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#pop-blur)">
+    <!-- Main cloud mass -->
+    <path
+      d="M380 460C395 350 500 290 610 260C740 225 875 240 1000 250C1100 258 1210 290 1245 370C1280 450 1220 550 1130 615C1045 675 925 695 805 690C680 685 545 675 465 615C390 560 365 565 380 460Z"
+      fill="url(#pop-g1)"
+    />
+
+    <!-- Secondary glow -->
+    <path
+      d="M860 360C890 300 975 270 1045 280C1115 290 1180 345 1178 405C1175 465 1100 500 1035 520C975 538 900 540 855 505C810 470 830 425 860 360Z"
+      fill="url(#pop-g2)"
+    />
+  </g>
+</svg>

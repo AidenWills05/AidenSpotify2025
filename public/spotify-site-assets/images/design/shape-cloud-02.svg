@@ -1,0 +1,26 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad2" x1="260" y1="160" x2="1280" y2="760" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6A7BFF"/>
+      <stop offset="50%" stop-color="#35E0A1"/>
+      <stop offset="100%" stop-color="#B7FF7A"/>
+    </linearGradient>
+    <radialGradient id="glow2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(900 420) rotate(-14) scale(700 400)">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.34"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur2" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="64"/>
+    </filter>
+  </defs>
+
+  <g opacity="0.8">
+    <path filter="url(#blur2)"
+      d="M315 474C302 388 364 311 450 302C479 230 550 189 624 199C676 146 757 134 827 167C878 124 951 121 1015 157C1092 129 1178 165 1227 229C1313 227 1385 289 1394 374C1404 468 1338 547 1245 561C1226 631 1158 682 1083 676H460C364 676 287 569 315 474Z"
+      fill="url(#grad2)"/>
+
+    <path filter="url(#blur2)"
+      d="M429 550C408 483 447 417 513 401C542 349 602 322 658 332C706 280 782 272 838 312C900 278 981 289 1030 346C1103 339 1169 386 1187 458C1240 477 1276 527 1265 587C1252 657 1190 704 1120 700H569C505 700 446 636 429 550Z"
+      fill="url(#glow2)"/>
+  </g>
+</svg>
