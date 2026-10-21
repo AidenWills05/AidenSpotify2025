@@ -1,0 +1,22 @@
+// Spotify catalog matches for every song featured in the archive.
+export const songCatalog = {
+  'take-me-out': { title: 'Take Me Out', artist: 'Franz Ferdinand', id: '20I8RduZC2PWMWTDCZuuAN', url: "https://open.spotify.com/track/20I8RduZC2PWMWTDCZuuAN?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=a4780b4b-e04d-428e-9a16-95edad216661" },
+  'ghost-town': { title: 'Ghost Town', artist: 'Kanye West', id: '7vgTNTaEz3CsBZ1N4YQalM', url: "https://open.spotify.com/track/7vgTNTaEz3CsBZ1N4YQalM?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=29d15198-83e3-47f3-b779-89675b0f0862" },
+  'no-rest': { title: "Ain't No Rest for the Wicked", artist: 'Cage The Elephant', id: '3Pzh926pXggbMe2ZpXyMV7', url: "https://open.spotify.com/track/3Pzh926pXggbMe2ZpXyMV7?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=bc94cad8-a4a9-42f1-87d3-2958a046109d" },
+  'stay-next-to-me': { title: 'Stay Next To Me (with Chelsea Cutler)', artist: 'Quinn XCII', id: '7kTlHVCARylJAqm40yVoWE', url: "https://open.spotify.com/track/7kTlHVCARylJAqm40yVoWE?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=794a8bd1-d19a-4495-8f0b-0553f334012b" },
+  '1901': { title: '1901', artist: 'Phoenix', id: '68hYdj3GepWm2R202KhJT7', url: "https://open.spotify.com/track/68hYdj3GepWm2R202KhJT7?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=c65aefbd-8ef2-4f34-ae8b-c726df5bfcaa" },
+  'strange': { title: "Don't You Think It's Strange?", artist: 'Wallows', id: '6EaSmr2XbPyHwTBpRWnEOC', url: "https://open.spotify.com/track/6EaSmr2XbPyHwTBpRWnEOC?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=b83167b8-e604-4f2e-a646-f7d57cdf8446" },
+  'sticky': { title: 'Sticky (feat. GloRilla, Sexyy Red & Lil Wayne)', artist: 'Tyler, The Creator', id: '3tFed7YsjGnIfxeLEQwx3R', url: "https://open.spotify.com/track/3tFed7YsjGnIfxeLEQwx3R?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=c005a1ed-063d-41d6-a7ca-1616422460b7" },
+  'jt': { title: 'JT', artist: 'Jon Bellion', id: '1eftOUoeMO1JkSQQmS6jXF', url: "https://open.spotify.com/track/1eftOUoeMO1JkSQQmS6jXF?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=d73639ef-c004-437b-9c06-4113a9eaae37" },
+  'noid': { title: 'Noid', artist: 'Tyler, The Creator', id: '1YdtGoSYDvVQKoUqSDXX41', url: "https://open.spotify.com/track/1YdtGoSYDvVQKoUqSDXX41?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=67932324-ff60-4d77-a051-e9a25505a3fe" },
+  'brazil': { title: 'Brazil', artist: 'Declan McKenna', id: '4sNG6zQBmtq7M8aeeKJRMQ', url: "https://open.spotify.com/track/4sNG6zQBmtq7M8aeeKJRMQ?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=ebc58b03-9bc6-4204-85ce-a5f8e4d22a49" },
+  'false-alarms': { title: 'False Alarms (with Jon Bellion)', artist: 'Lawrence', id: '7sVZVSQNEb712wRGWALMTh', url: "https://open.spotify.com/track/7sVZVSQNEb712wRGWALMTh?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=f9a9684f-c22b-428d-8819-2e915153e0a4" },
+  'maple-syrup': { title: 'Maple Syrup', artist: 'The Backseat Lovers', id: '4MXE6VCvTsQitHWrAxj7Kg', url: "https://open.spotify.com/track/4MXE6VCvTsQitHWrAxj7Kg?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=fcbea525-65b8-41b7-9033-190b69cea192" },
+  'dance-alone': { title: 'Dance Alone', artist: 'Blanks', id: '4c7KKGVfRKTZB6iAUoiQzM', url: "https://open.spotify.com/track/4c7KKGVfRKTZB6iAUoiQzM?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=721f71c9-fe22-4591-b023-34455d2cb504" },
+  'five-years': { title: '5 Years Time', artist: 'Noah And The Whale', id: '12je8giC2S9smUHJ81tpiL', url: "https://open.spotify.com/track/12je8giC2S9smUHJ81tpiL?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=d01a534b-1413-4059-a479-88817148517d" },
+  'dracula': { title: 'Dracula', artist: 'Tame Impala', id: '1NXbNEAcPvY5G1xvfN57aA', url: "https://open.spotify.com/track/1NXbNEAcPvY5G1xvfN57aA?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=60d3dfdb-8c89-4018-b8b7-9c42a6b42bf5" },
+  'there-is-a-light': { title: 'There Is a Light That Never Goes Out - 2011 Remaster', artist: 'The Smiths', id: '0WQiDwKJclirSYG9v5tayI', url: "https://open.spotify.com/track/0WQiDwKJclirSYG9v5tayI?utm_source=openai&utm_medium=chatgpt&go=1&nap_web=1&request_id=ae94fc1c-0f25-474a-b91b-c9c0de9f1504" },
+} as const;
+
+export type SongKey = keyof typeof songCatalog;
+export type PlayableSong = { title: string; artist: string; id: string; url: string };

@@ -1,9 +1,13 @@
 'use client';
 
-import { useRef } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useRef, type CSSProperties } from 'react';
+import Months from './components/months';
+import FinalSummary from './components/final-summary';
+import { SongPlayButton } from './components/music-player';
+import { timelinePosition, activeTimelineYear, timelinePath } from './lib/timeline-geometry';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -14,6 +18,7 @@ const topArtists = [
     minutes: '2,236',
     plays: '736',
     topSong: 'Stay Next To Me (with Chelsea Cutler)',
+    songKey: 'stay-next-to-me' as const,
     image: '/spotify-site-assets/images/artists/quinn-xcii/quinn-xcii-01.jpg',
   },
   {
@@ -22,6 +27,7 @@ const topArtists = [
     minutes: '1,974',
     plays: '620',
     topSong: "Don't You Think It's Strange?",
+    songKey: 'strange' as const,
     image: '/spotify-site-assets/images/artists/wallows/wallows-01.jpg',
   },
   {
@@ -30,6 +36,7 @@ const topArtists = [
     minutes: '1,117',
     plays: '313',
     topSong: 'Sticky (feat. GloRilla, Sexyy Red & Lil Wayne)',
+    songKey: 'sticky' as const,
     image: '/spotify-site-assets/images/artists/tyler-the-creator/tyler-the-creator-01.jpg',
   },
   {
@@ -38,12 +45,14 @@ const topArtists = [
     minutes: '1,064',
     plays: '305',
     topSong: 'JT',
+    songKey: 'jt' as const,
     image: '/spotify-site-assets/images/artists/jon-bellion/jon-bellion-01.jpg',
   },
 ];
 
 const topSongHero = {
   title: 'Take Me Out',
+  songKey: 'take-me-out' as const,
   artist: 'Franz Ferdinand',
   plays: '51',
   minutes: '185',
@@ -54,6 +63,7 @@ const topSongsList = [
   {
     rank: '02',
     title: 'Ghost Town',
+    songKey: 'ghost-town' as const,
     artist: 'Kanye West',
     plays: '47',
     minutes: '208',
@@ -62,6 +72,7 @@ const topSongsList = [
   {
     rank: '03',
     title: "Ain't No Rest for the Wicked",
+    songKey: 'no-rest' as const,
     artist: 'Cage The Elephant',
     plays: '46',
     minutes: '132',
@@ -70,6 +81,7 @@ const topSongsList = [
   {
     rank: '04',
     title: 'Stay Next To Me (with Chelsea Cutler)',
+    songKey: 'stay-next-to-me' as const,
     artist: 'Quinn XCII',
     plays: '44',
     minutes: '152',
@@ -78,6 +90,7 @@ const topSongsList = [
   {
     rank: '05',
     title: '1901',
+    songKey: '1901' as const,
     artist: 'Phoenix',
     plays: '43',
     minutes: '134',
@@ -106,6 +119,7 @@ const monthsTimeline = [
     artist: 'Kanye West',
     artistMinutes: '433',
     song: 'Noid',
+    songKey: 'noid' as const,
     songArtist: 'Tyler, The Creator',
     mood:
       'bg-[radial-gradient(circle_at_20%_18%,rgba(220,235,255,0.22),transparent_20%),radial-gradient(circle_at_78%_20%,rgba(196,214,255,0.16),transparent_24%),linear-gradient(135deg,#dce7f7_0%,#c9d8ef_40%,#b7c9e4_100%)]',
@@ -118,6 +132,7 @@ const monthsTimeline = [
     artist: 'Kanye West',
     artistMinutes: '461',
     song: "Ain't No Rest for the Wicked",
+    songKey: 'no-rest' as const,
     songArtist: 'Cage The Elephant',
     mood:
       'bg-[radial-gradient(circle_at_18%_20%,rgba(255,215,215,0.20),transparent_18%),radial-gradient(circle_at_80%_18%,rgba(255,236,198,0.18),transparent_24%),linear-gradient(135deg,#f6e4ea_0%,#f4dfd7_45%,#f0dcc6_100%)]',
@@ -130,6 +145,7 @@ const monthsTimeline = [
     artist: 'Kanye West',
     artistMinutes: '430',
     song: 'JT',
+    songKey: 'jt' as const,
     songArtist: 'Jon Bellion',
     mood:
       'bg-[radial-gradient(circle_at_16%_20%,rgba(225,255,214,0.22),transparent_20%),radial-gradient(circle_at_82%_22%,rgba(190,239,204,0.18),transparent_24%),linear-gradient(135deg,#e7f4dd_0%,#d7edd6_44%,#d2eadf_100%)]',
@@ -142,6 +158,7 @@ const monthsTimeline = [
     artist: 'Kanye West',
     artistMinutes: '423',
     song: 'Brazil',
+    songKey: 'brazil' as const,
     songArtist: 'Declan McKenna',
     mood:
       'bg-[radial-gradient(circle_at_22%_18%,rgba(237,255,186,0.18),transparent_18%),radial-gradient(circle_at_78%_22%,rgba(186,239,255,0.18),transparent_22%),linear-gradient(135deg,#edf4d8_0%,#dff0d8_42%,#d7edf4_100%)]',
@@ -154,6 +171,7 @@ const monthsTimeline = [
     artist: 'Kanye West',
     artistMinutes: '575',
     song: 'False Alarms (with Jon Bellion)',
+    songKey: 'false-alarms' as const,
     songArtist: 'Lawrence',
     mood:
       'bg-[radial-gradient(circle_at_18%_20%,rgba(255,222,170,0.20),transparent_18%),radial-gradient(circle_at_80%_18%,rgba(255,192,174,0.18),transparent_22%),linear-gradient(135deg,#f7ecd8_0%,#f6e1cf_44%,#f4d8d3_100%)]',
@@ -166,6 +184,7 @@ const monthsTimeline = [
     artist: 'Kanye West',
     artistMinutes: '433',
     song: 'Maple Syrup',
+    songKey: 'maple-syrup' as const,
     songArtist: 'The Backseat Lovers',
     mood:
       'bg-[radial-gradient(circle_at_20%_18%,rgba(255,236,173,0.18),transparent_18%),radial-gradient(circle_at_78%_20%,rgba(186,230,255,0.18),transparent_22%),linear-gradient(135deg,#f8efd7_0%,#f5e5c9_38%,#e2eef7_100%)]',
@@ -178,6 +197,7 @@ const monthsTimeline = [
     artist: 'Kanye West',
     artistMinutes: '564',
     song: '1901',
+    songKey: '1901' as const,
     songArtist: 'Phoenix',
     mood:
       'bg-[radial-gradient(circle_at_18%_18%,rgba(255,214,108,0.24),transparent_18%),radial-gradient(circle_at_82%_18%,rgba(255,163,106,0.20),transparent_22%),linear-gradient(135deg,#f9e6b4_0%,#f5cf99_42%,#efb88f_100%)]',
@@ -190,6 +210,7 @@ const monthsTimeline = [
     artist: 'Kanye West',
     artistMinutes: '294',
     song: 'Dance Alone',
+    songKey: 'dance-alone' as const,
     songArtist: 'Blanks',
     mood:
       'bg-[radial-gradient(circle_at_18%_20%,rgba(255,211,147,0.18),transparent_18%),radial-gradient(circle_at_82%_20%,rgba(255,190,130,0.18),transparent_22%),linear-gradient(135deg,#f5e7cb_0%,#f0d7bc_44%,#ebcab0_100%)]',
@@ -205,6 +226,7 @@ const monthsTimeline = [
     artist: 'Kanye West',
     artistMinutes: '648',
     song: 'Take Me Out',
+    songKey: 'take-me-out' as const,
     songArtist: 'Franz Ferdinand',
     mood:
       'bg-[radial-gradient(circle_at_18%_18%,rgba(216,216,255,0.18),transparent_18%),radial-gradient(circle_at_82%_20%,rgba(196,226,255,0.16),transparent_22%),linear-gradient(135deg,#e7e7f5_0%,#dde5f3_44%,#d4e1ef_100%)]',
@@ -217,6 +239,7 @@ const monthsTimeline = [
     artist: 'Kanye West',
     artistMinutes: '617',
     song: '5 Years Time',
+    songKey: 'five-years' as const,
     songArtist: 'Noah And The Whale',
     mood:
       'bg-[radial-gradient(circle_at_18%_18%,rgba(217,131,90,0.20),transparent_18%),radial-gradient(circle_at_82%_20%,rgba(243,183,113,0.16),transparent_22%),linear-gradient(135deg,#e8c4a8_0%,#dba98d_42%,#cb8f72_100%)]',
@@ -229,6 +252,7 @@ const monthsTimeline = [
     artist: 'Kanye West',
     artistMinutes: '464',
     song: 'Dracula',
+    songKey: 'dracula' as const,
     songArtist: 'Tame Impala',
     mood:
       'bg-[radial-gradient(circle_at_20%_18%,rgba(181,114,89,0.18),transparent_18%),radial-gradient(circle_at_82%_20%,rgba(214,168,121,0.14),transparent_22%),linear-gradient(135deg,#c8b3a0_0%,#b3917d_42%,#916f60_100%)]',
@@ -241,17 +265,13 @@ const monthsTimeline = [
     artist: 'The Smiths',
     artistMinutes: '264',
     song: 'There Is a Light That Never Goes Out - 2011 Remaster',
+    songKey: 'there-is-a-light' as const,
     songArtist: 'The Smiths',
     mood:
       'bg-[radial-gradient(circle_at_18%_18%,rgba(215,228,248,0.18),transparent_18%),radial-gradient(circle_at_82%_20%,rgba(196,208,228,0.16),transparent_22%),linear-gradient(135deg,#d9e2f0_0%,#c7d2e3_42%,#b4c2d6_100%)]',
     photo: '/spotify-site-assets/images/personal/2025-12-photo-01.jpg',
   },
 ];
-
-const monthPairs = Array.from(
-  { length: Math.ceil(monthsTimeline.length / 2) },
-  (_, index) => monthsTimeline.slice(index * 2, index * 2 + 2)
-);
 
 const habitsData = {
   eyebrow: 'Habits',
@@ -445,12 +465,55 @@ const pastYearsTimeline = [
   },
 ];
 
+const yearMarkers = pastYearsTimeline.map((year) => year.marker);
+const yearPath = timelinePath(yearMarkers);
+
 export default function Home() {
   const container = useRef<HTMLDivElement>(null);
 
+
+
   useGSAP(
     () => {
-      gsap.fromTo(
+      const media = gsap.matchMedia();
+      media.add({ motion: '(prefers-reduced-motion: no-preference)', reduce: '(prefers-reduced-motion: reduce)' }, (context) => {
+        if (context.conditions?.reduce) {
+          const finalOverlay = container.current?.querySelector<HTMLElement>('[data-final-overlay]');
+          if (finalOverlay) finalOverlay.inert = false;
+          return;
+        }
+      const cleanup: Array<() => void> = [];
+      const floating = gsap.utils.toArray<HTMLElement>(
+        '[data-habit-card], [data-genre-mass], [data-genre-label], .month-photo, [data-intro-cloud], [data-intro-album-card], [data-intro-kanye-card], [data-intro-wallows-card]'
+      );
+      floating.forEach((element, index) => {
+        element.classList.add('ambient-float');
+        element.style.setProperty('--drift-x', `${index % 2 ? -4 : 4}px`);
+        element.style.setProperty('--drift-y', `${index % 3 ? -9 : -6}px`);
+        element.style.setProperty('--drift-duration', `${5.5 + (index % 5) * 0.6}s`);
+        element.style.setProperty('--drift-delay', `${-(index % 5) * 1.1}s`);
+        const watch = ScrollTrigger.create({
+          trigger: element.closest('[data-month-row], section') ?? element,
+          start: 'top bottom', end: 'bottom top',
+          onToggle: (self) => element.classList.toggle('is-floating', self.isActive),
+        });
+        element.classList.toggle('is-floating', watch.isActive);
+        cleanup.push(() => element.classList.remove('ambient-float', 'is-floating'));
+      });
+
+      const animateAmbient = (selector: string, vars: gsap.TweenVars) => {
+        gsap.utils.toArray<HTMLElement>(selector).forEach((element) => {
+          const tween = gsap.to(element, { ...vars, paused: true });
+          ScrollTrigger.create({
+            trigger: element.closest('section') ?? element,
+            start: 'top bottom',
+            end: 'bottom top',
+            onToggle: (self) => { if (self.isActive) tween.play(); else tween.pause(); },
+          });
+        });
+      };
+
+      const introEntrance = gsap.fromTo(
         '[data-fade]',
         { opacity: 0, y: 30 },
         {
@@ -462,221 +525,38 @@ export default function Home() {
         }
       );
 
+      gsap.set('#top-artist', { autoAlpha: 0 });
+      gsap.set('[data-top-artist-image], [data-top-artist-copy]', { autoAlpha: 0 });
+
+      // The opening and Kanye now share one sticky stage and one scroll clock.
       const introTl = gsap.timeline({
         scrollTrigger: {
-          trigger: '#intro',
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 1,
+          trigger: '#intro', start: 'top top', end: 'bottom bottom', scrub: 0.65,
+          onUpdate: (self) => {
+            if (self.progress > 0.001 && introEntrance.isActive()) introEntrance.progress(1).kill();
+          },
         },
+        defaults: { ease: 'none' },
       });
-
-      introTl.to(
-        '[data-intro-stage]',
-        {
-          scale: 1.22,
-          transformOrigin: 'center center',
-          ease: 'none',
-        },
-        0
-      );
-
-      introTl.to(
-        '[data-intro-copy]',
-        {
-          y: -220,
-          scale: 1.18,
-          opacity: 0,
-          ease: 'none',
-          stagger: 0.02,
-        },
-        0
-      );
-
-      introTl.to(
-        '[data-intro-cloud]',
-        {
-          x: -180,
-          y: -120,
-          scale: 1.7,
-          opacity: 0,
-          ease: 'none',
-        },
-        0
-      );
-
-      introTl.to(
-        '[data-intro-album-card]',
-        {
-          x: 340,
-          y: -180,
-          scale: 5.4,
-          opacity: 0,
-          filter: 'blur(10px)',
-          ease: 'none',
-        },
-        0.04
-      );
-
-      introTl.to(
-        '[data-intro-kanye-card]',
-        {
-          x: -260,
-          y: -80,
-          scale: 5.8,
-          opacity: 0,
-          filter: 'blur(10px)',
-          ease: 'none',
-        },
-        0.05
-      );
-
-      introTl.to(
-        '[data-intro-wallows-card]',
-        {
-          x: 160,
-          y: 260,
-          scale: 6.2,
-          opacity: 0,
-          ease: 'none',
-        },
-        0.06
-      );
-
-      introTl.fromTo(
-        '[data-intro-wallows-full]',
-        {
-          scale: 0.32,
-          opacity: 0,
-          y: 80,
-          filter: 'blur(0px)',
-        },
-        {
-          scale: 1.55,
-          opacity: 0.92,
-          y: 0,
-          filter: 'blur(0px)',
-          ease: 'none',
-        },
-        0.14
-      );
-
-      introTl.to(
-        '[data-intro-wallows-full]',
-        {
-          scale: 2.35,
-          opacity: 0,
-          filter: 'blur(18px)',
-          ease: 'none',
-        },
-        0.42
-      );
-
-      introTl.to(
-        '[data-intro-tunnel]',
-        {
-          scale: 1.8,
-          opacity: 1,
-          ease: 'none',
-        },
-        0
-      );
-
-      introTl.to(
-        '[data-intro-tunnel]',
-        {
-          opacity: 0,
-          ease: 'none',
-        },
-        0.28
-      );
-
-      introTl.to(
-        '[data-intro-base-bg]',
-        {
-          opacity: 0,
-          ease: 'none',
-        },
-        0.24
-      );
-
-      introTl.to(
-        '[data-intro-kanye-bg]',
-        {
-          opacity: 1,
-          ease: 'none',
-        },
-        0.22
-      );
-
-      introTl.to(
-        '[data-intro-top-artist-bg]',
-        {
-          opacity: 1,
-          ease: 'none',
-        },
-        0.22
-      );
-
-      introTl.to(
-        '[data-intro-grain]',
-        {
-          opacity: 0,
-          ease: 'none',
-        },
-        0.24
-      );
-
-      gsap.fromTo(
-        '[data-top-artist-bg]',
-        { opacity: 0, y: 90, scale: 1.03 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: '#top-artist',
-            start: 'top 78%',
-            end: 'top 24%',
-            scrub: 1.2,
-          },
-        }
-      );
-
-      gsap.fromTo(
-        '[data-top-artist-image]',
-        { opacity: 0, x: -140, scale: 0.94 },
-        {
-          opacity: 1,
-          x: 0,
-          scale: 1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '#top-artist',
-            start: 'top 68%',
-            end: 'top 22%',
-            scrub: 1.2,
-          },
-        }
-      );
-
-      gsap.fromTo(
-        '[data-top-artist-copy]',
-        { opacity: 0, x: 90 },
-        {
-          opacity: 1,
-          x: 0,
-          stagger: 0.1,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '#top-artist',
-            start: 'top 66%',
-            end: 'top 20%',
-            scrub: 1.2,
-          },
-        }
-      );
+      introTl.to('[data-intro-stage]', { scale: 1.035, duration: 0.6 }, 0);
+      introTl.fromTo('[data-intro-copy]', { opacity: 1, y: 0 },
+        { opacity: 0, y: -85, stagger: 0.012, duration: 0.26, immediateRender: false }, 0.08);
+      introTl.to('[data-intro-cloud]', { x: -65, y: -40, opacity: 0, duration: 0.32 }, 0.12);
+      introTl.to('[data-intro-album-card]', { x: 170, y: -70, scale: 2.1, opacity: 0, duration: 0.32 }, 0.12);
+      introTl.to('[data-intro-kanye-card]', { x: -140, y: -25, scale: 2.15, opacity: 0, duration: 0.32 }, 0.13);
+      introTl.to('[data-intro-wallows-card]', { x: 75, y: 90, scale: 2, opacity: 0, duration: 0.32 }, 0.15);
+      introTl.fromTo('[data-intro-wallows-full]', { scale: 0.98, opacity: 0, y: 0 },
+        { scale: 1.06, opacity: 0.58, duration: 0.22 }, 0.28);
+      introTl.to('[data-intro-wallows-full]', { scale: 1.12, opacity: 0, duration: 0.22 }, 0.49);
+      introTl.to('[data-intro-tunnel]', { scale: 1.15, opacity: 0, duration: 0.4 }, 0.12);
+      introTl.to('[data-intro-base-bg], [data-intro-grain]', { opacity: 0, duration: 0.35 }, 0.43);
+      introTl.to('#top-artist', { autoAlpha: 1, duration: 0.2 }, 0.46);
+      introTl.to('[data-top-artist-bg]', { opacity: 1, duration: 0.32 }, 0.46);
+      introTl.fromTo('[data-top-artist-image]', { autoAlpha: 0, x: -28, scale: 0.98 },
+        { autoAlpha: 1, x: 0, scale: 1, duration: 0.34, ease: 'power2.out' }, 0.52);
+      introTl.fromTo('[data-top-artist-copy]', { autoAlpha: 0, y: 22 },
+        { autoAlpha: 1, y: 0, duration: 0.28, stagger: 0.035, ease: 'power2.out' }, 0.6);
+      introTl.to({}, { duration: 0.2 }, 1.02);
 
       gsap.utils.toArray<HTMLElement>('[data-artist-row]').forEach((row, index) => {
         const fromX = index % 2 === 0 ? -90 : 90;
@@ -693,7 +573,7 @@ export default function Home() {
               trigger: row,
               start: 'top 78%',
               end: 'top 48%',
-              scrub: 1,
+              scrub: 0.45,
             },
           }
         );
@@ -711,7 +591,7 @@ export default function Home() {
             trigger: '#top-song',
             start: 'top 46%',
             end: 'top 10%',
-            scrub: 1.2,
+            scrub: 0.45,
           },
         }
       );
@@ -728,7 +608,7 @@ export default function Home() {
             trigger: '#top-song',
             start: 'top 44%',
             end: 'top 8%',
-            scrub: 1.2,
+            scrub: 0.45,
           },
         }
       );
@@ -748,7 +628,7 @@ export default function Home() {
               trigger: row,
               start: 'top 78%',
               end: 'top 48%',
-              scrub: 1,
+              scrub: 0.45,
             },
           }
         );
@@ -766,7 +646,7 @@ export default function Home() {
             trigger: '#total-minutes',
             start: 'top 70%',
             end: 'top 26%',
-            scrub: 1.2,
+            scrub: 0.45,
           },
         }
       );
@@ -783,7 +663,7 @@ export default function Home() {
             trigger: '#total-minutes',
             start: 'top 72%',
             end: 'top 28%',
-            scrub: 1.2,
+            scrub: 0.45,
           },
         }
       );
@@ -801,12 +681,12 @@ export default function Home() {
             trigger: '#total-minutes',
             start: 'top 68%',
             end: 'top 24%',
-            scrub: 1.2,
+            scrub: 0.45,
           },
         }
       );
 
-      gsap.to('[data-total-minutes-glow]', {
+      animateAmbient('[data-total-minutes-glow]', {
         x: 22,
         y: -16,
         scale: 1.08,
@@ -837,140 +717,33 @@ export default function Home() {
         },
       });
 
-      gsap.utils.toArray<HTMLElement>('[data-month-row]').forEach((row, index) => {
+      gsap.utils.toArray<HTMLElement>('[data-month-row]').forEach((row) => {
         gsap.fromTo(
-          row,
-          { opacity: 0, y: 70 },
+          row.querySelector('[data-month-reveal]'),
+          { autoAlpha: 0, y: 28 },
           {
-            opacity: 1,
+            autoAlpha: 1,
             y: 0,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: row,
-              start: 'top 56%',
-              end: 'top 18%',
-              scrub: 1.15,
-            },
+            duration: 0.65,
+            ease: 'power2.out',
+            scrollTrigger: { trigger: row, start: 'top 78%', once: true },
           }
         );
-
-        const bg = row.querySelector('[data-month-bg]');
-        const title = row.querySelector('[data-month-title]');
-        const copy = row.querySelector('[data-month-copy]');
-        const photo = row.querySelector('[data-month-photo-card]');
-
-        if (bg) {
-          gsap.to(bg, {
-            yPercent: -12,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: row,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 1,
-            },
-          });
-        }
-
-        if (title) {
-          gsap.fromTo(
-            title,
-            { opacity: 0, scale: 0.78, y: 40 },
-            {
-              opacity: 1,
-              scale: 1,
-              y: 0,
-              ease: 'power3.out',
-              scrollTrigger: {
-                trigger: row,
-                start: 'top 76%',
-                end: 'top 42%',
-                scrub: 1.1,
-              },
-            }
-          );
-        }
-
-        if (copy) {
-          gsap.fromTo(
-            copy,
-            { opacity: 0, y: 60 },
-            {
-              opacity: 1,
-              y: 0,
-              ease: 'power3.out',
-              scrollTrigger: {
-                trigger: row,
-                start: 'top 42%',
-                end: 'top 14%',
-                scrub: 1.1,
-              },
-            }
-          );
-        }
-
-        if (photo) {
-          gsap.fromTo(
-            photo,
-            { opacity: 0, x: 50, y: 24, rotate: 5, scale: 0.94 },
-            {
-              opacity: 1,
-              x: 0,
-              y: 0,
-              rotate: 2,
-              scale: 1,
-              ease: 'power3.out',
-              scrollTrigger: {
-                trigger: row,
-                start: 'top 40%',
-                end: 'top 12%',
-                scrub: 1.15,
-              },
-            }
-          );
-
-          gsap.to(photo, {
-            y: -6,
-rotate: 2,
-            duration: 4.2 + index * 0.12,
-            repeat: -1,
-            yoyo: true,
-            ease: 'sine.inOut',
-          });
-        }
       });
 
       gsap.fromTo(
-        '[data-month-collapse]',
-        { opacity: 0, scale: 0.86, y: 70 },
-        {
-          opacity: 1,
-          scale: 1,
-          y: 0,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '#months-collapse',
-            start: 'top 58%',
-            end: 'top 20%',
-            scrub: 1.2,
-          },
-        }
-      );
-
-      gsap.fromTo(
         '[data-habits-copy]',
-        { opacity: 0, y: 110, filter: 'blur(10px)' },
+        { opacity: 0, y: 110 },
         {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
           stagger: 0.12,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: '#habits',
             start: 'top 64%',
             end: 'top 18%',
-            scrub: 1.2,
+            scrub: 0.45,
           },
         }
       );
@@ -986,12 +759,12 @@ rotate: 2,
             trigger: '#habits',
             start: 'top 60%',
             end: 'top 18%',
-            scrub: 1.05,
+            scrub: 0.45,
           },
         }
       );
 
-      gsap.utils.toArray<HTMLElement>('[data-habit-card]').forEach((card, index) => {
+      gsap.utils.toArray<HTMLElement>('[data-habit-card]').forEach((card) => {
         gsap.fromTo(
           card,
           {
@@ -1006,34 +779,25 @@ rotate: 2,
               trigger: card,
               start: 'top 78%',
               end: 'top 34%',
-              scrub: 1.05,
+              scrub: 0.45,
             },
           }
         );
-
-        gsap.to(card, {
-          y: index % 2 === 0 ? -2 : -3,
-          duration: 5.8 + index * 0.2,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        });
       });
 
       gsap.fromTo(
         '[data-genres-copy]',
-        { opacity: 0, y: 90, filter: 'blur(10px)' },
+        { opacity: 0, y: 90 },
         {
           opacity: 1,
           y: 0,
-          filter: 'blur(0px)',
           stagger: 0.1,
           ease: 'power3.out',
           scrollTrigger: {
             trigger: '#genres',
             start: 'top 64%',
             end: 'top 18%',
-            scrub: 1.15,
+            scrub: 0.45,
           },
         }
       );
@@ -1050,7 +814,7 @@ rotate: 2,
             trigger: '#genres',
             start: 'top 62%',
             end: 'top 18%',
-            scrub: 1.1,
+            scrub: 0.45,
           },
         }
       );
@@ -1068,22 +832,13 @@ rotate: 2,
               trigger: '#genres',
               start: 'top 60%',
               end: 'top 20%',
-              scrub: 1.15,
+              scrub: 0.45,
             },
           }
         );
-
-        gsap.to(mass, {
-          y: index % 2 === 0 ? -5 : -7,
-          x: index % 2 === 0 ? 3 : -3,
-          duration: 6 + index * 0.35,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
-        });
       });
 
-      gsap.utils.toArray<HTMLElement>('[data-genre-label]').forEach((label, index) => {
+      gsap.utils.toArray<HTMLElement>('[data-genre-label]').forEach((label) => {
         gsap.fromTo(
           label,
           { opacity: 0, y: 30 },
@@ -1095,21 +850,10 @@ rotate: 2,
               trigger: '#genres',
               start: 'top 56%',
               end: 'top 18%',
-              scrub: 1.1,
+              scrub: 0.45,
             },
           }
         );
-
-        gsap.to(label, {
-  x: index % 2 === 0 ? 4 : -4,
-  y: index % 2 === 0 ? -3 : 3,
-  rotate: index % 2 === 0 ? 0.3 : -0.3,
-  duration: 4 + index * 0.3,
-  repeat: -1,
-  yoyo: true,
-  ease: 'sine.inOut',
-  transformOrigin: 'center center',
-});
       });
 
       gsap.utils.toArray<HTMLElement>('[data-genre-card]').forEach((card) => {
@@ -1125,13 +869,13 @@ rotate: 2,
               trigger: card,
               start: 'top 98%',
               end: 'top 34%',
-              scrub: 1.05,
+              scrub: 0.45,
             },
           }
         );
       });
 
-      gsap.to('[data-genres-orb]', {
+      animateAmbient('[data-genres-orb]', {
         scale: 1.03,
         x: 8,
         y: -6,
@@ -1143,180 +887,145 @@ rotate: 2,
 
       gsap.fromTo(
   '[data-past-years-copy]',
-  { opacity: 0, y: 80, filter: 'blur(10px)' },
+  { opacity: 0, y: 80 },
   {
     opacity: 1,
     y: 0,
-    filter: 'blur(0px)',
     stagger: 0.1,
     ease: 'power3.out',
     scrollTrigger: {
       trigger: '#past-years',
       start: 'top 72%',
       end: 'top 28%',
-      scrub: 1.1,
+      scrub: 0.45,
     },
   }
 );
 
-const timelineTrack = document.querySelector<HTMLElement>('[data-timeline-track]');
-const timelineSection = document.querySelector<HTMLElement>('#past-years');
-const yearPanels = gsap.utils.toArray<HTMLElement>('[data-year-panel]');
-const yearPoints = gsap.utils.toArray<HTMLElement>('[data-year-point]');
-const yearChips = gsap.utils.toArray<HTMLElement>('[data-year-chip]');
+      const timelineTrack = container.current?.querySelector<HTMLElement>('[data-timeline-track]');
+      const timelineSection = container.current?.querySelector<HTMLElement>('#past-years');
+      const shell = container.current?.querySelector<HTMLElement>('[data-past-years-shell]');
+      const overlay = container.current?.querySelector<HTMLElement>('[data-final-overlay]');
+      const finalCard = container.current?.querySelector<HTMLElement>('[data-final-card]');
+      const progressPath = container.current?.querySelector<SVGPathElement>('[data-year-progress]');
+      const yearPanels = gsap.utils.toArray<HTMLElement>('[data-year-panel]');
+      const yearPoints = gsap.utils.toArray<HTMLElement>('[data-year-point]');
+      const yearChips = gsap.utils.toArray<HTMLElement>('[data-year-chip]');
 
-if (timelineTrack && timelineSection && yearPanels.length) {
-  gsap.set(yearPanels, {
-    autoAlpha: 0,
-    y: 44,
-    scale: 0.92,
-    rotateX: 10,
-    transformOrigin: '50% 100%',
-  });
+      if (timelineTrack && timelineSection && shell && overlay && finalCard && progressPath && yearPanels.length) {
+        gsap.set(yearPanels, { autoAlpha: 0 });
+        gsap.set(yearPoints, { scale: 1, transformOrigin: '50% 50%' });
+        gsap.set(yearChips, { opacity: 0.58 });
+        gsap.set(overlay, { autoAlpha: 0 });
+        overlay.inert = true;
+        gsap.set('[data-final-overlay-piece]', { autoAlpha: 0, y: 10 });
 
-  gsap.set(yearPoints, {
-    scale: 1,
-    transformOrigin: '50% 50%',
-  });
+        const pathLength = progressPath.getTotalLength();
+        progressPath.style.strokeDasharray = `${pathLength}`;
+        progressPath.style.strokeDashoffset = `${pathLength}`;
+        // Cache the curve's arc lengths so its bright head stays at the same X as the dots.
+        const pathSamples = Array.from({ length: 257 }, (_, index) => {
+          const length = pathLength * index / 256;
+          return { x: progressPath.getPointAtLength(length).x, length };
+        });
+        const drawTo = (x: number) => {
+          let low = 0, high = pathSamples.length - 1;
+          while (high - low > 1) {
+            const mid = (low + high) >> 1;
+            if (pathSamples[mid].x <= x) low = mid; else high = mid;
+          }
+          const left = pathSamples[low], right = pathSamples[high];
+          const ratio = Math.max(0, Math.min(1, (x - left.x) / (right.x - left.x || 1)));
+          progressPath.style.strokeDashoffset = `${pathLength - left.length - (right.length - left.length) * ratio}`;
+        };
 
-  gsap.set(yearChips, {
-    y: 0,
-    opacity: 0.58,
-    scale: 1,
-    transformOrigin: '50% 50%',
-  });
+        let activeIndex = -1;
+        const setActiveYear = (nextIndex: number) => {
+          if (nextIndex === activeIndex) return;
+          const previousIndex = activeIndex;
+          activeIndex = nextIndex;
+          context.add(() => {
+            if (previousIndex >= 0) {
+              gsap.to(yearPanels[previousIndex], { autoAlpha: 0, duration: 0.12, overwrite: true });
+              gsap.to(yearPoints[previousIndex], { scale: 1, duration: 0.16, overwrite: true });
+              gsap.to(yearChips[previousIndex], { opacity: 0.58, y: 0, duration: 0.16, overwrite: true });
+            }
+            gsap.to(yearPanels[nextIndex], { autoAlpha: 1, duration: 0.14, overwrite: true });
+            gsap.to(yearPoints[nextIndex], { scale: 1.7, duration: 0.16, overwrite: true });
+            gsap.to(yearChips[nextIndex], { opacity: 1, y: -4, duration: 0.16, overwrite: true });
+          });
+        };
 
-  const getTravel = () =>
-    Math.max(timelineTrack.scrollWidth - window.innerWidth + 420, 1);
+        const sourcePanel = yearPanels[yearPanels.length - 1];
+        const seed = sourcePanel.cloneNode(true) as HTMLElement;
+        seed.removeAttribute('data-year-panel');
+        seed.removeAttribute('style');
+        seed.className = `${sourcePanel.className} final-seed`;
+        seed.setAttribute('aria-hidden', 'true');
+        seed.firstElementChild?.remove();
+        overlay.appendChild(seed);
+        gsap.set(seed, { autoAlpha: 0, xPercent: -50 });
+        cleanup.push(() => seed.remove());
 
-  let currentActiveIndex = -1;
+        const ambient = gsap.to('[data-final-overlay-float]', {
+          x: 16, y: -12, duration: 7, repeat: -1, yoyo: true,
+          ease: 'sine.inOut', stagger: 0.6, paused: true,
+        });
+        let overlayReady = false;
+        const morphStart = 1.15;
+        const morphDuration = 0.58;
+        const sourceTop = () => shell.getBoundingClientRect().top - timelineSection.getBoundingClientRect().top + sourcePanel.offsetTop;
+        const sourceY = () => sourceTop() + sourcePanel.offsetHeight / 2 - timelineSection.clientHeight / 2;
+        const yearsTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: timelineSection, start: 'top top',
+            end: () => `+=${(yearMarkers[yearMarkers.length - 1].x - yearMarkers[0].x) + window.innerHeight * 2.4}`,
+            scrub: 0.65, pin: true, anticipatePin: 1, invalidateOnRefresh: true,
+          },
+          onUpdate: () => {
+            const position = timelinePosition(yearMarkers, shell.clientWidth, yearsTl.time());
+            setActiveYear(activeTimelineYear(yearMarkers, position.head));
+            drawTo(position.head);
+            const ready = yearsTl.time() >= morphStart + morphDuration;
+            if (ready !== overlayReady) {
+              overlayReady = ready;
+              overlay.inert = !ready;
+              overlay.style.pointerEvents = ready ? 'auto' : 'none';
+              if (ready) ambient.play(); else ambient.pause();
+            }
+          },
+        });
 
-  const setActiveYear = (index: number) => {
-    if (index === currentActiveIndex) return;
-    currentActiveIndex = index;
-
-    gsap.to(yearPanels, {
-      autoAlpha: 0,
-      y: 44,
-      scale: 0.92,
-      rotateX: 10,
-      duration: 0.2,
-      ease: 'power2.out',
-      overwrite: 'auto',
-    });
-
-    gsap.to(yearPoints, {
-      scale: 1,
-      duration: 0.18,
-      ease: 'power2.out',
-      overwrite: 'auto',
-    });
-
-    gsap.to(yearChips, {
-      y: 0,
-      opacity: 0.58,
-      scale: 1,
-      duration: 0.18,
-      ease: 'power2.out',
-      overwrite: 'auto',
-    });
-
-    if (yearPanels[index]) {
-      gsap.to(yearPanels[index], {
-        autoAlpha: 1,
-        y: 0,
-        scale: 1,
-        rotateX: 0,
-        duration: 0.24,
-        ease: 'power3.out',
-        overwrite: 'auto',
+        yearsTl.fromTo(timelineTrack,
+          { x: () => timelinePosition(yearMarkers, shell.clientWidth, 0).x },
+          { x: () => timelinePosition(yearMarkers, shell.clientWidth, 1).x, duration: 1, ease: 'none' }, 0);
+        yearsTl.set(overlay, { autoAlpha: 1 }, morphStart);
+        yearsTl.set(seed, {
+          autoAlpha: 1, left: '50%', top: sourceTop,
+          width: () => sourcePanel.offsetWidth, height: () => sourcePanel.offsetHeight,
+          padding: () => getComputedStyle(sourcePanel).padding,
+        }, morphStart);
+        yearsTl.fromTo(finalCard,
+          { y: sourceY, scaleX: () => sourcePanel.offsetWidth / finalCard.offsetWidth,
+            scaleY: () => sourcePanel.offsetHeight / finalCard.offsetHeight,
+            backgroundColor: '#1b3149', borderRadius: '1.8rem', transformOrigin: '50% 50%' },
+          { y: 0, scaleX: 1, scaleY: 1, backgroundColor: '#0b191c', borderRadius: '2rem',
+            duration: morphDuration, ease: 'power2.inOut', immediateRender: false }, morphStart);
+        yearsTl.to('[data-past-years-copy], [data-past-years-shell], [data-past-years-orb]',
+          { autoAlpha: 0, duration: 0.22 }, morphStart);
+        yearsTl.to(seed, { autoAlpha: 0, y: -12, duration: 0.22, ease: 'power1.inOut' }, morphStart + 0.16);
+        yearsTl.fromTo('.final-atmosphere', { opacity: 0 },
+          { opacity: 1, duration: 0.42, immediateRender: false }, morphStart + 0.12);
+        yearsTl.to('[data-final-overlay-piece]',
+          { autoAlpha: 1, y: 0, duration: 0.22, stagger: 0.02, ease: 'power2.out' }, morphStart + 0.34);
+        yearsTl.to({}, { duration: 0.22 }, morphStart + morphDuration + 0.08);
+        setActiveYear(0);
+        drawTo(yearMarkers[0].x);
+      }
+      animateAmbient('[data-past-years-orb]', { x: 14, y: -10, scale: 1.04, duration: 7.2, repeat: -1, yoyo: true, ease: 'sine.inOut' });
+      return () => cleanup.forEach((dispose) => dispose());
       });
-    }
-
-    if (yearPoints[index]) {
-      gsap.to(yearPoints[index], {
-        scale: 1.9,
-        duration: 0.18,
-        ease: 'power3.out',
-        overwrite: 'auto',
-      });
-    }
-
-    if (yearChips[index]) {
-      gsap.to(yearChips[index], {
-        y: -14,
-        opacity: 1,
-        scale: 1.06,
-        duration: 0.18,
-        ease: 'power3.out',
-        overwrite: 'auto',
-      });
-    }
-  };
-
-  const yearsTl = gsap.timeline({
-  scrollTrigger: {
-    trigger: timelineSection,
-    start: 'top top',
-    end: () => `+=${getTravel() + window.innerHeight * 1.05}`,
-    scrub: 1,
-    pin: true,
-    anticipatePin: 1,
-    invalidateOnRefresh: true,
-    onUpdate: (self) => {
-  const firstMarkerX = pastYearsTimeline[0].marker.x;
-  const lastMarkerX = pastYearsTimeline[pastYearsTimeline.length - 1].marker.x;
-  const activationOffset = 20;
-
-  const progressHeadX =
-    firstMarkerX + (lastMarkerX - firstMarkerX) * self.progress + activationOffset;
-
-  let activeIndex = 0;
-
-  pastYearsTimeline.forEach((item, index) => {
-    if (progressHeadX >= item.marker.x) {
-      activeIndex = index;
-    }
-  });
-
-  setActiveYear(activeIndex);
-},
-  },
-});
-
-  yearsTl.to(
-    timelineTrack,
-    {
-      x: () => -getTravel(),
-      duration: 1,
-      ease: 'none',
-    },
-    0
-  );
-
-  yearsTl.to(
-    '[data-year-progress]',
-    {
-      scaleX: 1,
-      transformOrigin: 'left center',
-      duration: 1,
-      ease: 'none',
-    },
-    0
-  );
-
-  setActiveYear(0);
-}
-
-gsap.to('[data-past-years-orb]', {
-  x: 14,
-  y: -10,
-  scale: 1.04,
-  duration: 7.2,
-  repeat: -1,
-  yoyo: true,
-  ease: 'sine.inOut',
-});
+      return () => media.revert();
     },
     { scope: container }
   );
@@ -1435,12 +1144,9 @@ gsap.to('[data-past-years-orb]', {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section
+          <section
         id="top-artist"
-        className="relative z-30 -mt-[100vh] flex min-h-[88vh] items-center overflow-hidden px-8 py-10"
+        className="top-artist-landing absolute inset-0 z-30 flex items-center overflow-hidden px-8 py-10"
       >
         <div className="absolute inset-0 overflow-hidden opacity-0" data-top-artist-bg>
           <div className="absolute inset-x-0 -top-[28vh] bottom-0 bg-[radial-gradient(circle_at_18%_22%,rgba(29,185,84,0.22),transparent_26%),radial-gradient(circle_at_82%_18%,rgba(80,155,245,0.28),transparent_28%),radial-gradient(circle_at_66%_78%,rgba(29,185,84,0.14),transparent_28%),linear-gradient(135deg,#f8efe4_0%,#e8fbf1_48%,#e5f0ff_100%)] blur-[6px]" />
@@ -1449,6 +1155,8 @@ gsap.to('[data-past-years-orb]', {
         <div className="relative z-10 mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-10 md:grid-cols-[0.95fr_1.05fr]">
           <div className="relative" data-top-artist-image>
             <img
+              loading="eager"
+              decoding="async"
               src="/spotify-site-assets/images/artists/kanye-west/kanye-west-hero-01.jpg"
               alt="Kanye West"
               className="h-[58vh] max-h-[38rem] w-full rounded-[2rem] object-cover shadow-2xl"
@@ -1521,6 +1229,8 @@ gsap.to('[data-past-years-orb]', {
           </div>
         </div>
       </section>
+        </div>
+      </section>
 
       <section
         id="top-artists-list"
@@ -1550,6 +1260,8 @@ gsap.to('[data-past-years-orb]', {
                 </div>
 
                 <img
+              loading="lazy"
+              decoding="async"
                   src={artist.image}
                   alt={artist.name}
                   className="h-36 w-full rounded-[1.5rem] object-cover shadow-xl sm:h-44"
@@ -1582,8 +1294,8 @@ gsap.to('[data-past-years-orb]', {
                     Top Song
                   </p>
 
-                  <p className="mt-2 text-base font-medium text-neutral-900 sm:text-lg">
-                    {artist.topSong}
+                  <p className="song-with-play mt-2 text-base font-medium text-neutral-900 sm:text-lg">
+                    <span>{artist.topSong}</span><SongPlayButton songKey={artist.songKey} />
                   </p>
                 </div>
               </div>
@@ -1608,10 +1320,10 @@ gsap.to('[data-past-years-orb]', {
             </p>
 
             <h2
-              className="text-4xl font-semibold tracking-tight text-neutral-900 sm:text-6xl"
+              className="song-with-play text-4xl font-semibold tracking-tight text-neutral-900 sm:text-6xl"
               data-top-song-copy
             >
-              {topSongHero.title}
+              <span>{topSongHero.title}</span><SongPlayButton songKey={topSongHero.songKey} />
             </h2>
 
             <p
@@ -1657,6 +1369,8 @@ gsap.to('[data-past-years-orb]', {
           <div className="relative md:ml-14" data-top-song-image>
             <div className="absolute inset-0 scale-105 rounded-[2rem] bg-[radial-gradient(circle,rgba(255,190,90,0.22),transparent_62%)] blur-2xl" />
             <img
+              loading="lazy"
+              decoding="async"
               src={topSongHero.image}
               alt={topSongHero.title}
               className="relative h-[24rem] w-[24rem] max-w-full rounded-[2rem] object-cover shadow-2xl"
@@ -1693,14 +1407,16 @@ gsap.to('[data-past-years-orb]', {
                 </div>
 
                 <img
+              loading="lazy"
+              decoding="async"
                   src={song.image}
                   alt={song.title}
                   className="h-32 w-32 rounded-[1.5rem] object-cover shadow-xl sm:h-36 sm:w-36"
                 />
 
                 <div>
-                  <h4 className="text-2xl font-semibold tracking-tight text-neutral-900 sm:text-4xl">
-                    {song.title}
+                  <h4 className="song-with-play text-2xl font-semibold tracking-tight text-neutral-900 sm:text-4xl">
+                    <span>{song.title}</span><SongPlayButton songKey={song.songKey} />
                   </h4>
 
                   <p className="mt-2 text-base text-neutral-700 sm:text-xl">
@@ -1804,141 +1520,7 @@ gsap.to('[data-past-years-orb]', {
         </div>
       </section>
 
-      <section id="months" className="relative z-10 overflow-hidden px-4 pb-12 pt-4 sm:px-8">
-  <div className="relative z-10 space-y-6">
-    {monthPairs.map((pair, pairIndex) => (
-      <section
-        key={`month-pair-${pairIndex}`}
-        className="mx-auto grid max-w-6xl gap-6 md:grid-cols-2"
-      >
-        {pair.map((month, monthIndex) => {
-          const monthNumber = pairIndex * 2 + monthIndex + 1;
-          const photos = month.photos ?? (month.photo ? [month.photo] : []);
-
-          return (
-            <article
-              key={month.key}
-              data-month-row
-              className="relative min-h-[32rem] overflow-hidden rounded-[2rem]"
-            >
-              <div className={`absolute inset-0 ${month.mood}`} data-month-bg />
-
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_28%,rgba(0,0,0,0.10)_100%)]" />
-
-              <div className="relative z-10 grid h-full grid-cols-1 gap-6 px-6 py-8 md:grid-cols-[1.05fr_0.95fr]">
-                <div className="max-w-2xl" data-month-copy>
-                  <p
-                    className="text-[3.5rem] font-black leading-none tracking-tight text-transparent bg-clip-text bg-[linear-gradient(135deg,rgba(255,255,255,1)_0%,rgba(255,235,185,1)_42%,rgba(194,226,255,1)_100%)] drop-shadow-[0_10px_24px_rgba(0,0,0,0.18)] sm:text-[4.5rem] lg:text-[5.4rem]"
-                    data-month-title
-                  >
-                    {month.month}
-                  </p>
-
-                  <p className="mt-3 text-xs uppercase tracking-[0.28em] text-white/55">
-                    month {String(monthNumber).padStart(2, '0')}
-                  </p>
-
-                  <p className="mt-6 text-[2.2rem] font-semibold leading-none tracking-tight text-white sm:text-[3rem]">
-                    {month.minutes}
-                  </p>
-
-                  <p className="mt-2 text-base text-white/72">
-                    minutes
-                  </p>
-
-                  <div className="mt-8 grid gap-5 sm:grid-cols-2">
-                    <div>
-                      <p className="text-[0.65rem] uppercase tracking-[0.24em] text-white/45">
-                        top artist
-                      </p>
-                      <p className="mt-2 text-xl font-medium tracking-tight text-white sm:text-2xl">
-                        {month.artist}
-                      </p>
-                      <p className="mt-1 text-sm text-white/65">
-                        {month.artistMinutes} minutes
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-[0.65rem] uppercase tracking-[0.24em] text-white/45">
-                        top song
-                      </p>
-                      <p className="mt-2 text-lg font-medium tracking-tight text-white sm:text-xl">
-                        {month.song}
-                      </p>
-                      <p className="mt-1 text-sm text-white/65">
-                        {month.songArtist}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="relative flex items-center justify-center">
-  {photos.length > 1 ? (
-    <div
-      className="relative flex flex-col items-center gap-3 md:items-end md:-translate-x-4"
-      data-month-photo-card
-    >
-      {photos.map((photoSrc, photoIndex) => (
-        <div
-          key={`${month.key}-photo-${photoIndex}`}
-          className={`relative rounded-[1.4rem] border border-white/15 bg-white/10 p-2.5 shadow-[0_18px_50px_rgba(0,0,0,0.18)] backdrop-blur-sm ${
-            photoIndex === 1 ? 'md:-translate-x-8' : ''
-          }`}
-        >
-          <img
-            src={photoSrc}
-            alt={`${month.month} ${photoIndex + 1}`}
-            className="block h-auto max-h-[11rem] w-auto max-w-[10rem] rounded-[1rem] object-contain sm:max-h-[12.5rem] sm:max-w-[11rem] lg:max-h-[13rem] lg:max-w-[11.5rem]"
-          />
-        </div>
-      ))}
-    </div>
-  ) : photos.length === 1 ? (
-    <div
-      className="relative md:-translate-x-14"
-      data-month-photo-card
-    >
-      <div className="relative rounded-[1.4rem] border border-white/15 bg-white/10 p-2.5 shadow-[0_18px_50px_rgba(0,0,0,0.18)] backdrop-blur-sm">
-        <img
-          src={photos[0]}
-          alt={`${month.month} photo`}
-          className="block h-auto max-h-[13rem] w-auto max-w-[10.5rem] rounded-[1rem] object-contain sm:max-h-[14rem] sm:max-w-[11rem] lg:max-h-[15rem] lg:max-w-[11.5rem]"
-        />
-      </div>
-    </div>
-  ) : (
-    <div className="h-[12rem] w-[10rem] rounded-[1.4rem] border border-white/10 bg-white/5 opacity-0" />
-  )}
-</div>
-              </div>
-            </article>
-          );
-        })}
-      </section>
-    ))}
-
-    <section
-      id="months-collapse"
-      className="relative z-10 flex min-h-[60vh] items-center justify-center overflow-hidden px-8 py-16"
-    >
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,#d7e1ed_0%,#bcc9d8_100%)]" />
-      <div
-        className="relative z-10 flex h-[18rem] w-[18rem] items-center justify-center rounded-full bg-white/35 shadow-[0_30px_90px_rgba(0,0,0,0.14)] backdrop-blur-md"
-        data-month-collapse
-      >
-        <div className="text-center">
-          <p className="text-sm uppercase tracking-[0.28em] text-neutral-600">
-            12 months
-          </p>
-          <p className="mt-4 text-4xl font-semibold tracking-tight text-neutral-900 sm:text-5xl">
-            one year
-          </p>
-        </div>
-      </div>
-    </section>
-  </div>
-</section>
+      <Months months={monthsTimeline} />
 
       <section
         id="habits"
@@ -2045,6 +1627,8 @@ gsap.to('[data-past-years-orb]', {
         <div key={item.genre}>
           <div className={`absolute ${item.blobClass} z-0`} data-genre-mass>
             <img
+              loading="lazy"
+              decoding="async"
               src={item.asset}
               alt={item.genre}
               className="h-auto w-full opacity-[0.72] mix-blend-screen blur-[1px]"
@@ -2090,6 +1674,8 @@ gsap.to('[data-past-years-orb]', {
 
             <div className="mt-5 flex items-center gap-4">
               <img
+              loading="lazy"
+              decoding="async"
                 src={item.image}
                 alt={item.value}
                 className="h-20 w-20 rounded-[1rem] object-cover shadow-lg"
@@ -2147,8 +1733,8 @@ gsap.to('[data-past-years-orb]', {
     data-past-years-orb
   />
 
-  <div className="relative z-10 h-full px-8 py-10">
-    <div className="mx-auto max-w-5xl">
+  <div className="relative z-10 past-years-layout">
+    <div className="past-years-heading">
       <p
         className="text-sm uppercase tracking-[0.3em] text-white/50"
         data-past-years-copy
@@ -2171,9 +1757,9 @@ gsap.to('[data-past-years-orb]', {
       </p>
     </div>
 
-    <div className="relative mx-auto h-[52rem] max-w-6xl">
+    <div className="past-years-shell" data-past-years-shell>
       <div
-        className="absolute left-0 top-[25%] h-[20rem] w-[4200px] -translate-y-1/2"
+        className="year-track"
         data-timeline-track
       >
         <svg
@@ -2182,19 +1768,18 @@ gsap.to('[data-past-years-orb]', {
           aria-hidden="true"
         >
           <path
-            d="M80 188 C 340 242, 720 92, 1120 126 S 1850 262, 2580 160 S 3200 58, 3650 142"
+            d={yearPath}
             fill="none"
             stroke="rgba(255,255,255,0.14)"
             strokeWidth="4"
             strokeLinecap="round"
           />
           <path
-            d="M170 188 C 340 242, 720 92, 1120 126 S 1850 262, 2580 160 S 3200 58, 3650 142"
+            d={yearPath}
             fill="none"
             stroke="rgba(255,255,255,0.78)"
             strokeWidth="4"
             strokeLinecap="round"
-            style={{ transform: 'scaleX(0)', transformOrigin: 'left center' }}
             data-year-progress
           />
         </svg>
@@ -2204,8 +1789,9 @@ gsap.to('[data-past-years-orb]', {
             <div
               className="absolute rounded-full border border-white/10 bg-[#13263d]/76 px-4 py-2 text-sm font-medium tracking-[0.24em] text-white/60 backdrop-blur-sm"
               style={{
-                left: `${item.marker.x - 32}px`,
-                top: `${item.marker.y - 58}px`,
+                left: `${item.marker.x}px`,
+                top: `${item.marker.y + 28}px`,
+                transform: 'translateX(-50%)',
                 opacity: 0.58,
               }}
               data-year-chip
@@ -2216,8 +1802,8 @@ gsap.to('[data-past-years-orb]', {
             <div
               className="absolute h-6 w-6 rounded-full border border-white/35"
               style={{
-                left: `${item.marker.x}px`,
-                top: `${item.marker.y}px`,
+                left: `${item.marker.x - 12}px`,
+                top: `${item.marker.y - 12}px`,
                 backgroundColor: item.accent,
                 boxShadow: item.current
                   ? '0 0 34px rgba(132,255,196,0.22)'
@@ -2231,15 +1817,16 @@ gsap.to('[data-past-years-orb]', {
         ))}
       </div>
 
-      <div className="pointer-events-none absolute inset-0">
+      <div className="year-panels pointer-events-none absolute inset-0">
         {pastYearsTimeline.map((item) => (
           <div
             key={`${item.year}-panel`}
-            className={`invisible absolute left-1/2 top-[1%] w-[22rem] -translate-x-1/2 -translate-y-[78%] rounded-[1.8rem] border p-7 opacity-0 shadow-[0_28px_90px_rgba(0,0,0,0.24)] backdrop-blur-md ${
+            className={`year-panel rounded-[1.8rem] border shadow-[0_28px_90px_rgba(0,0,0,0.24)] ${
               item.current
                 ? 'border-white/18 bg-[#1b3149]/88'
                 : 'border-white/12 bg-[#122035]/82'
             }`}
+            style={{ '--year-panel-bottom': `calc(19rem - ${item.marker.y}px + 2.25rem)` } as CSSProperties}
             data-year-panel
           >
             <div
@@ -2276,7 +1863,7 @@ gsap.to('[data-past-years-orb]', {
                   </p>
                 </div>
 
-                <div>
+                                <div>
                   <p className="text-[0.65rem] uppercase tracking-[0.24em] text-white/40">
                     Dominant Genre
                   </p>
@@ -2286,7 +1873,7 @@ gsap.to('[data-past-years-orb]', {
                 </div>
               </div>
 
-              <p className="mt-6 max-w-[18rem] text-sm leading-6 text-white/64">
+              <p className="year-note max-w-[18rem] text-white/64">
                 {item.note}
               </p>
             </div>
@@ -2294,7 +1881,18 @@ gsap.to('[data-past-years-orb]', {
         ))}
       </div>
     </div>
-  </div>
+    </div>
+
+
+
+
+    
+
+
+    <FinalSummary
+      songs={[topSongHero, ...topSongsList]}
+      artists={['Kanye West', ...topArtists.map((artist) => artist.name)]}
+    />
 </section>
     </main>
   );
